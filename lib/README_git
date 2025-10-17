@@ -1,0 +1,75 @@
+# 🧭 README_GIT — Gestion du dépôt Fusionneur
+
+## 🎯 Objectif
+Ce dépôt héberge **Fusionneur**, une application Flutter de bureau (principalement Windows, compatible Linux/macOS)
+permettant de **fusionner les fichiers d’un projet Flutter en un seul fichier Markdown annoté** pour l’analyse ou le travail collaboratif avec une IA.
+
+Ce document résume la configuration Git et les bonnes pratiques de versionnage du projet.
+
+---
+
+## 🧱 Structure du dépôt
+
+fusionneur/
+├── lib/ # Code source principal (Flutter)
+│ ├── features/ # Pages et services logiques
+│ ├── core/ # Modèles et constantes
+│ └── shared/ # Services génériques, bootstrap, providers...
+├── windows/ # Support desktop Windows (CMake)
+├── macos/ # Support desktop macOS (optionnel)
+├── linux/ # Support desktop Linux (optionnel)
+├── assets/ # Images, thèmes, seeds…
+├── pubspec.yaml # Dépendances Flutter
+├── .gitignore # Règles d’exclusion Git
+└── README_providers.md # Documentation du système de providers
+
+yaml
+Copier le code
+
+---
+
+## ⚙️ Plateformes cibles
+
+| Plateforme         | Support                | Remarques                                     |
+|--------------------|------------------------|-----------------------------------------------|
+| 🪟 **Windows**     | ✅ complet            | Plateforme principale de développement         |
+| 🐧 **Linux**       | ✅ probable           | Aucun plugin incompatible                      |
+| 🍎 **macOS**       | ✅ probable           | Aucun plugin natif bloquant                    |
+| 🌐 **Web**         | ⚠️ partiel            | `path_provider` et `file_picker` non supportés |
+| 🤖 **Android/iOS** | 🚫 non pris en charge | `file_picker` crash sous Android               |
+
+---
+
+---
+
+## 🧩 `.gitignore` officiel
+
+```gitignore
+# Flutter & Dart
+.dart_tool/
+.packages
+build/
+pubspec.lock
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Desktop builds
+windows/flutter/ephemeral/
+windows/build/
+linux/flutter/ephemeral/
+linux/build/
+macos/Flutter/ephemeral/
+macos/build/
+
+# IDE / outils
+.idea/
+.vscode/
+*.iml
+
+# Logs & caches
+*.log
+*.tmp
+*.bak
+*.swp
+*.DS_Store
+Thumbs.db

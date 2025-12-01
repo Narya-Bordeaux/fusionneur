@@ -3,6 +3,7 @@
 // Affiche le nombre de fichiers, l'état de chargement et les éventuelles erreurs.
 
 import 'dart:io';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:fusionneur/core/utils/utils.dart';
 
@@ -106,20 +107,30 @@ class SelectionPreviewList extends StatelessWidget {
               border: Border.all(color: Colors.grey[300]!),
               borderRadius: BorderRadius.circular(4),
             ),
-            child: Scrollbar(
-              thumbVisibility: true,  // Scrollbar toujours visible sur Windows
-              child: ListView.builder(
-                itemCount: files.length,
-                itemBuilder: (context, index) => Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8.0,
-                    vertical: 4.0,
-                  ),
-                  child: Text(
-                    files[index],
-                    style: const TextStyle(
-                      fontFamily: 'monospace',
-                      fontSize: 12,
+            child: ScrollConfiguration(
+              // Active le drag-scroll sur Windows desktop
+              behavior: ScrollConfiguration.of(context).copyWith(
+                scrollbars: true,
+                dragDevices: {
+                  PointerDeviceKind.touch,
+                  PointerDeviceKind.mouse,
+                },
+              ),
+              child: Scrollbar(
+                thumbVisibility: true,  // Scrollbar toujours visible
+                child: ListView.builder(
+                  itemCount: files.length,
+                  itemBuilder: (context, index) => Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8.0,
+                      vertical: 4.0,
+                    ),
+                    child: Text(
+                      files[index],
+                      style: const TextStyle(
+                        fontFamily: 'monospace',
+                        fontSize: 12,
+                      ),
                     ),
                   ),
                 ),

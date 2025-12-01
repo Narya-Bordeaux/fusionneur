@@ -1,8 +1,10 @@
 // lib/pages/entry_mode/widgets/selection_preview_list.dart
 // Liste des fichiers sélectionnés pour la preview du mode Entrypoint.
-// Affiche le nombre de fichiers, l’état de chargement et les éventuelles erreurs.
+// Affiche le nombre de fichiers, l'état de chargement et les éventuelles erreurs.
 
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:fusionneur/core/utils/utils.dart';
 
 class SelectionPreviewList extends StatelessWidget {
   final List<String> files;
@@ -15,6 +17,22 @@ class SelectionPreviewList extends StatelessWidget {
     this.isLoading = false,
     this.errorMessage,
   });
+
+  /// Calcule la taille totale des fichiers en octets
+  int _calculateTotalSize() {
+    int total = 0;
+    for (final filePath in files) {
+      try {
+        final file = File(filePath);
+        if (file.existsSync()) {
+          total += file.lengthSync();
+        }
+      } catch (_) {
+        // Ignorer les erreurs (fichier inaccessible, etc.)
+      }
+    }
+    return total;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,37 +73,43 @@ class SelectionPreviewList extends StatelessWidget {
 
     // ──────────────────────────────────────────────
     // Cas 4 : affichage normal
+    final totalSize = _calculateTotalSize();
+    final sizeFormatted = BytesUtils.prettyBytes(totalSize);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Text(
-              'Fichiers sélectionnés',
-              style: Theme.of(context).textTheme.titleMedium,
+        // Ligne de résumé : X fichiers Y Ko
+        Padding(
+          padding: const EdgeInsets.only(bottom: 12.0),
+          child: Text(
+            '${files.length} fichier${files.length > 1 ? "s" : ""} • $sizeFormatted',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
             ),
-            const SizedBox(width: 8),
-            Text(
-              '(${files.length} fichier${files.length > 1 ? "s" : ""})',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Colors.grey[600],
-              ),
-            ),
-          ],
+          ),
         ),
-        const SizedBox(height: 8),
-        Flexible(
-          child: ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: files.length,
-            itemBuilder: (context, index) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 2.0),
-              child: Text(
-                files[index],
-                style: const TextStyle(
-                  fontFamily: 'monospace',
-                  fontSize: 13,
+
+        // Liste scrollable des fichiers
+        Expanded(
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey[300]!),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: ListView.builder(
+              itemCount: files.length,
+              itemBuilder: (context, index) => Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8.0,
+                  vertical: 4.0,
+                ),
+                child: Text(
+                  files[index],
+                  style: const TextStyle(
+                    fontFamily: 'monospace',
+                    fontSize: 12,
+                  ),
                 ),
               ),
             ),

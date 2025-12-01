@@ -19,14 +19,17 @@ class EntryFilePicker extends StatelessWidget {
   });
 
   Future<void> _pickFile(BuildContext context) async {
+    // Ouvrir dans le dossier lib par défaut (plus pratique)
+    final libPath = PathUtils.join(projectRoot, 'lib');
+
     // Convertir en chemin natif pour que FilePicker puisse l'interpréter correctement
-    final nativePath = PathUtils.toNative(projectRoot);
+    final nativePath = PathUtils.toNative(libPath);
 
     final result = await FilePicker.platform.pickFiles(
       dialogTitle: 'Choisir un fichier Dart',
       type: FileType.custom,
       allowedExtensions: ['dart'],
-      initialDirectory: nativePath, // Chemin natif (backslash sur Windows)
+      initialDirectory: nativePath, // Chemin natif vers lib/ (backslash sur Windows)
     );
 
     if (result != null && result.files.single.path != null) {

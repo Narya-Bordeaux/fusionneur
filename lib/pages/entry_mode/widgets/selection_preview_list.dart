@@ -106,18 +106,21 @@ class SelectionPreviewList extends StatelessWidget {
               border: Border.all(color: Colors.grey[300]!),
               borderRadius: BorderRadius.circular(4),
             ),
-            child: ListView.builder(
-              itemCount: files.length,
-              itemBuilder: (context, index) => Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8.0,
-                  vertical: 4.0,
-                ),
-                child: Text(
-                  files[index],
-                  style: const TextStyle(
-                    fontFamily: 'monospace',
-                    fontSize: 12,
+            child: Scrollbar(
+              thumbVisibility: true,  // Scrollbar toujours visible sur Windows
+              child: ListView.builder(
+                itemCount: files.length,
+                itemBuilder: (context, index) => Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8.0,
+                    vertical: 4.0,
+                  ),
+                  child: Text(
+                    files[index],
+                    style: const TextStyle(
+                      fontFamily: 'monospace',
+                      fontSize: 12,
+                    ),
                   ),
                 ),
               ),

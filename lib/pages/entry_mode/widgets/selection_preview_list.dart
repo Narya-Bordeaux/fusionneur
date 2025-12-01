@@ -7,7 +7,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:fusionneur/core/utils/utils.dart';
 
-class SelectionPreviewList extends StatelessWidget {
+class SelectionPreviewList extends StatefulWidget {
   final List<String> files;
   final String? projectRoot;  // Dossier racine pour résoudre les chemins relatifs
   final bool isLoading;
@@ -21,17 +21,30 @@ class SelectionPreviewList extends StatelessWidget {
     this.errorMessage,
   });
 
+  @override
+  State<SelectionPreviewList> createState() => _SelectionPreviewListState();
+}
+
+class _SelectionPreviewListState extends State<SelectionPreviewList> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   /// Calcule la taille totale des fichiers en octets
   int _calculateTotalSize() {
-    if (projectRoot == null) return 0;
+    if (widget.projectRoot == null) return 0;
 
     int total = 0;
-    for (final filePath in files) {
+    for (final filePath in widget.files) {
       try {
         // Reconstituer le chemin absolu (les chemins dans files sont relatifs)
         final absolutePath = filePath.startsWith('/') || filePath.contains(':')
             ? filePath  // Déjà absolu
-            : PathUtils.join(projectRoot!, filePath);  // Relatif, on utilise join
+            : PathUtils.join(widget.projectRoot!, filePath);  // Relatif, on utilise join
 
         final file = File(absolutePath);
         if (file.existsSync()) {
@@ -48,7 +61,7 @@ class SelectionPreviewList extends StatelessWidget {
   Widget build(BuildContext context) {
     // ──────────────────────────────────────────────
     // Cas 1 : chargement en cours
-    if (isLoading) {
+    if (widget.isLoading) {
       return const Center(
         child: Padding(
           padding: EdgeInsets.all(12.0),
@@ -59,11 +72,11 @@ class SelectionPreviewList extends StatelessWidget {
 
     // ──────────────────────────────────────────────
     // Cas 2 : erreur
-    if (errorMessage != null && errorMessage!.isNotEmpty) {
+    if (widget.errorMessage != null && widget.errorMessage!.isNotEmpty) {
       return Padding(
         padding: const EdgeInsets.all(12.0),
         child: Text(
-          errorMessage!,
+          widget.errorMessage!,
           style: const TextStyle(color: Colors.redAccent),
         ),
       );
@@ -71,7 +84,7 @@ class SelectionPreviewList extends StatelessWidget {
 
     // ──────────────────────────────────────────────
     // Cas 3 : aucun fichier sélectionné
-    if (files.isEmpty) {
+    if (widget.files.isEmpty) {
       return const Padding(
         padding: EdgeInsets.all(8.0),
         child: Text(
@@ -93,7 +106,7 @@ class SelectionPreviewList extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(bottom: 12.0),
           child: Text(
-            '${files.length} fichier${files.length > 1 ? "s" : ""} • $sizeFormatted',
+            '${widget.files.length} fichier${widget.files.length > 1 ? "s" : ""} • $sizeFormatted',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
             ),
@@ -117,16 +130,18 @@ class SelectionPreviewList extends StatelessWidget {
                 },
               ),
               child: Scrollbar(
+                controller: _scrollController,  // Contrôleur explicite
                 thumbVisibility: true,  // Scrollbar toujours visible
                 child: ListView.builder(
-                  itemCount: files.length,
+                  controller: _scrollController,  // Même contrôleur pour la ListView
+                  itemCount: widget.files.length,
                   itemBuilder: (context, index) => Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8.0,
                       vertical: 4.0,
                     ),
                     child: Text(
-                      files[index],
+                      widget.files[index],
                       style: const TextStyle(
                         fontFamily: 'monospace',
                         fontSize: 12,

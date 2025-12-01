@@ -8,22 +8,31 @@ import 'package:fusionneur/core/utils/utils.dart';
 
 class SelectionPreviewList extends StatelessWidget {
   final List<String> files;
+  final String? projectRoot;  // Dossier racine pour résoudre les chemins relatifs
   final bool isLoading;
   final String? errorMessage;
 
   const SelectionPreviewList({
     super.key,
     required this.files,
+    this.projectRoot,
     this.isLoading = false,
     this.errorMessage,
   });
 
   /// Calcule la taille totale des fichiers en octets
   int _calculateTotalSize() {
+    if (projectRoot == null) return 0;
+
     int total = 0;
     for (final filePath in files) {
       try {
-        final file = File(filePath);
+        // Reconstituer le chemin absolu (les chemins dans files sont relatifs)
+        final absolutePath = filePath.startsWith('/') || filePath.contains(':')
+            ? filePath  // Déjà absolu
+            : PathUtils.join(projectRoot!, filePath);  // Relatif, on utilise join
+
+        final file = File(absolutePath);
         if (file.existsSync()) {
           total += file.lengthSync();
         }

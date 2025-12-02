@@ -1,5 +1,5 @@
 // Adaptateur pour exécuter la fusion "Entrypoint" avec options de nettoyage
-// et gestion de l’ouverture automatique du fichier fusionné.
+// et gestion de l'ouverture automatique du fichier fusionné.
 
 import 'package:fusionneur/core/glob_matcher.dart';
 import 'package:fusionneur/core/utils/file_opener.dart';
@@ -8,6 +8,7 @@ import 'package:path/path.dart' as p;
 
 import 'package:fusionneur/services/concatenator.dart';
 import 'package:fusionneur/services/concatenator_parts/file_selection.dart';
+import 'package:fusionneur/services/concatenator_parts/manifest_writer.dart'; // FusionMode
 import 'package:fusionneur/pages/entry_mode/services/entrypoint_run_executor.dart';
 import 'package:fusionneur/services/hash/hash_guard_service.dart';
 import 'package:fusionneur/services/storage.dart';
@@ -67,6 +68,10 @@ EntryRunWriter buildEntrypointRunWriterAdapter({
       ),
       excludePatterns: excludePatterns, // ✅ ici, au bon niveau
       computeImports: (files) async => plan.importsMap,
+
+      // Métadonnées pour le manifest
+      manifestMode: FusionMode.entrypoint,
+      manifestEntrypoint: ctx.entryFile,
     );
 
     // ──────────────────────────────────────────────

@@ -4,6 +4,7 @@
 
 import 'package:fusionneur/services/hash/hash_guard_service.dart';
 import 'package:fusionneur/services/concatenator.dart';
+import 'package:fusionneur/services/concatenator_parts/manifest_writer.dart'; // FusionMode
 import 'package:fusionneur/services/storage.dart';
 import 'package:fusionneur/core/utils/utils.dart';
 
@@ -70,6 +71,7 @@ class UnusedRunService {
     // 6) Options de concaténation
     final options = ConcatenationOptions(
       selectionSpec: SelectionSpec(includeDirs: const [],includeFiles: unusedFiles.toList()),
+      manifestMode: FusionMode.unused,
     );
 
     // 7) HashGuardService

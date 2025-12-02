@@ -12,6 +12,7 @@ import 'dart:io';
 
 import 'package:fusionneur/services/hash/hash_guard_service.dart';
 import 'package:fusionneur/services/concatenator.dart';
+import 'package:fusionneur/services/concatenator_parts/manifest_writer.dart'; // FusionMode
 import 'package:fusionneur/core/utils/path_utils.dart';
 import 'package:fusionneur/services/concatenator_parts/file_selection.dart';
 import 'package:fusionneur/services/storage.dart';
@@ -79,7 +80,11 @@ void main(List<String> args) async {
     includeFiles: parsed.withPubspec ? const ['pubspec.yaml'] : const [],
   );
 
-  final options = ConcatenationOptions(selectionSpec: selection);
+  final options = ConcatenationOptions(
+    selectionSpec: selection,
+    manifestMode: FusionMode.project,
+    manifestPresetName: presetName,
+  );
 
   final guard = HashGuardService();
 

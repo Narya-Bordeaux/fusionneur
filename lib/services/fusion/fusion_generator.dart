@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:fusionneur/services/concatenator.dart';           // ConcatenationOptions
+import 'package:fusionneur/services/concatenator_parts/manifest_writer.dart'; // FusionMode
 import 'package:fusionneur/services/hash/hash_guard_service.dart'; // HashGuardService
 import 'package:fusionneur/services/import_graph.dart';            // ImportGraph
 import 'package:fusionneur/core/utils/utils.dart';                 // PathUtils + PubspecUtils
@@ -66,6 +67,10 @@ class FusionGenerator {
             packageName: packageName,
           );
         },
+
+        // Métadonnées pour le manifest
+        manifestMode: FusionMode.project,
+        manifestPresetName: preset.name,
       ),
       // Ici on force le run (le guard décidera de committer ou non selon les hash).
       force: true,

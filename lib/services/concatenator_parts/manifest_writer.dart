@@ -1,15 +1,27 @@
 // Génère le bloc MANIFEST placé en tête du fichier fusionné.
 
+/// Mode de fusion (3 modes distincts).
+enum FusionMode {
+  project,     // Fusion basée sur un preset (sélection utilisateur)
+  entrypoint,  // Fusion à partir d'un entrypoint + imports transitifs
+  unused,      // Fusion des fichiers orphelins (jamais référencés)
+}
+
 /// Simple carrier des infos contextuelles affichables en tête.
 /// (Adapter au besoin : rien d'obligatoire n'est utilisé pour le hash.)
 class ManifestInfo {
   final String projectName;   // nom logique du projet (affichage)
-  final String? presetName;   // preset utilisé (facultatif)
   final String formatVersion; // ex: "Fusion v3"
+  final FusionMode mode;      // mode de fusion
+  final String? presetName;   // preset utilisé (mode project)
+  final String? entrypoint;   // fichier d'entrée (mode entrypoint)
+
   const ManifestInfo({
     required this.projectName,
     required this.formatVersion,
+    required this.mode,
     this.presetName,
+    this.entrypoint,
   });
 }
 
@@ -32,8 +44,26 @@ class ManifestWriter {
 
     // Section header (marker court, improbable dans du Dart/JSON)
     b.writeln('::FUSION::SECTION:MANIFEST');
-    b.writeln('${info.formatVersion} — Concatenated file for project: ${info.projectName}'
-        '${info.presetName != null ? ' (preset: ${info.presetName})' : ''}');
+
+    // En-tête adapté selon le mode
+    switch (info.mode) {
+      case FusionMode.project:
+        b.writeln('${info.formatVersion} — Project: ${info.projectName}'
+            '${info.presetName != null ? ' (preset: ${info.presetName})' : ''}');
+        b.writeln('This file contains a selection of files from the project, based on user-defined inclusion patterns.');
+
+      case FusionMode.entrypoint:
+        b.writeln('${info.formatVersion} — Entrypoint fusion (project: ${info.projectName})');
+        if (info.entrypoint != null) {
+          b.writeln('Entrypoint: ${info.entrypoint}');
+        }
+        b.writeln('This file contains the entrypoint file and all its transitive internal imports.');
+
+      case FusionMode.unused:
+        b.writeln('${info.formatVersion} — Unused files analysis (project: ${info.projectName})');
+        b.writeln('This file contains all files from the project that are never referenced (no imports, no exports, no main()).');
+        b.writeln('These files are potential candidates for cleanup.');
+    }
     b.writeln();
 
     // How to navigate — prescriptif pour IA et humain

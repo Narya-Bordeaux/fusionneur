@@ -36,11 +36,20 @@ class ConcatenationOptions {
   /// Hook pour calculer les exports (barrels).
   final Future<Map<String, Set<String>>> Function(List<String> files)? computeExports;
 
-  /// Politique d’ordre (TREE par défaut).
+  /// Politique d'ordre (TREE par défaut).
   final FileOrderingPolicy fileOrderingPolicy;
 
   /// Sélection déclarative (multi-dossiers/fichiers, exclusions).
   final SelectionSpec selectionSpec;
+
+  /// Métadonnées pour le manifest (mode de fusion).
+  final FusionMode manifestMode;
+
+  /// Nom du preset (pour mode project).
+  final String? manifestPresetName;
+
+  /// Fichier d'entrée (pour mode entrypoint).
+  final String? manifestEntrypoint;
 
   const ConcatenationOptions({
     this.subDir = 'lib',
@@ -54,6 +63,9 @@ class ConcatenationOptions {
       fallbackTree: true,
     ),
     this.selectionSpec = const SelectionSpec(includeDirs: ['lib']),
+    this.manifestMode = FusionMode.project,
+    this.manifestPresetName,
+    this.manifestEntrypoint,
   });
 }
 
@@ -168,6 +180,7 @@ class Concatenator {
       index: provisionalIndex,
       files: ordered,
       numbering: numbering,
+      options: options,
     );
 
     // 7) PASS 2: relire, remplir start/end, réécrire JSON (dernier bloc)
@@ -186,6 +199,7 @@ class Concatenator {
     required FusionIndex index,
     required List<String> files,
     required Map<String, int> numbering,
+    required ConcatenationOptions options,
   }) async {
     final out = File(outputFilePath);
     final sink = out.openWrite();
@@ -194,6 +208,9 @@ class Concatenator {
     final info = ManifestInfo(
       projectName: PathUtils.basename(projectRoot),
       formatVersion: 'Fusion v3',
+      mode: options.manifestMode,
+      presetName: options.manifestPresetName,
+      entrypoint: options.manifestEntrypoint,
     );
     _manifestWriter.writeTo(sink, info);
 

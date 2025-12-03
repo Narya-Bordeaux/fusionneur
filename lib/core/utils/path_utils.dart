@@ -12,6 +12,16 @@ class PathUtils {
     return path.replaceAll('\\', '/');
   }
 
+  /// Convertit un chemin POSIX en chemin natif pour la plateforme courante.
+  /// Sur Windows: reconvertit '/' en '\'.
+  /// Sur les autres plateformes: retourne le chemin inchangé.
+  static String toNative(String path) {
+    if (Platform.isWindows) {
+      return path.replaceAll('/', '\\');
+    }
+    return path;
+  }
+
   /// Normalise complètement un chemin :
   /// - remplace '\' par '/'
   /// - convertit en minuscules (pour neutraliser C:/ vs c:/ sur Windows)

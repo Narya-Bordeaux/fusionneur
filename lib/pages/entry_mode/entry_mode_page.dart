@@ -118,6 +118,7 @@ class EntryModePage extends ConsumerWidget {
             Expanded(
               child: SelectionPreviewList(
                 files: state.previewFiles,
+                projectRoot: projectRoot,  // Ajout du projectRoot pour calculer les tailles
                 isLoading: state.isLoadingPreview,
                 errorMessage: state.hasError ? state.errorMessage : null,
               ),

@@ -102,6 +102,5 @@ class JsonKeys {
   static const String endLine = 'endLine';
   static const String imports = 'imports';
   static const String importedBy = 'importedBy';
-  static const String fusionTags = '_fusionTags';
-  static const String unused = 'unused'; // bool facultatif, en plus du tag
+  static const String fusionTags = 'fusionTags';
 }

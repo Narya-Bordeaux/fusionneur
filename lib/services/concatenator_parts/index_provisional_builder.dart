@@ -10,7 +10,7 @@ class IndexProvisionalBuilder {
   /// Construit un FusionIndex provisoire :
   /// - numérotation déjà fournie (path -> N)
   /// - imports / importedBy stringifiés en "N,path"
-  /// - unusedPaths tagués (::FUSION::unused + bool)
+  /// - unusedPaths tagués (::FUSION::unused)
   FusionIndex build({
     required List<String> ordered,
     required Map<String, int> numbering,
@@ -26,7 +26,7 @@ class IndexProvisionalBuilder {
       final imports = _stringifyLinks(importsMap[path], numbering);
       final importedBy = _stringifyLinks(importedByMap[path], numbering);
 
-      // Entrée avec tags auto + bool 'unused'
+      // Entrée avec tags auto
       final baseEntry = FusionFileEntry.withAutoTags(
         fileNumber: number,
         fileName: name,
@@ -35,14 +35,12 @@ class IndexProvisionalBuilder {
         endLine: -1,
         imports: imports,
         importedBy: importedBy,
-        unused: unusedPaths.contains(path),
       );
 
       // Ajout du flag ::FUSION::unused si nécessaire (et sans doublon)
       final entry = unusedPaths.contains(path)
           ? baseEntry.copyWith(
         fusionTags: _withUnusedFlag(baseEntry.fusionTags),
-        unused: true,
       )
           : baseEntry;
 

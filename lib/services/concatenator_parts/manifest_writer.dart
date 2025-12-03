@@ -95,6 +95,14 @@ class ManifestWriter {
     b.writeln('- Source code blocks are unmodified (no reformat, no lint).');
     b.writeln();
 
+    // Explication de la Tag Line
+    b.writeln('TAG LINE ANATOMY');
+    b.writeln('Each code block includes a tag line immediately after the banner:');
+    b.writeln('  ::FUSION::code:<fileName> ::FUSION::code:<N,>');
+    b.writeln('This line serves as an anchor for quick navigation via grep/search.');
+    b.writeln('All tags (code, json, import, imported) are also listed in the JSON Index for comprehensive parsing.');
+    b.writeln();
+
     // Annoncer explicitement les 2 autres grandes sections avec markers courts
     b.writeln('::FUSION::SECTION:JSON_INDEX');
     b.writeln('The JSON Index is delimited by:');

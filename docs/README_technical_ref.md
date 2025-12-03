@@ -137,8 +137,7 @@ class FusionFileEntry {
   final int endLine;           // Ligne de fin
   final List<String> imports;  // Fichiers importés (format: "N,path")
   final List<String> importedBy; // Fichiers qui importent ce fichier
-  final List<String> fusionTags; // Tags ::FUSION:: associés
-  final bool unused;           // Fichier jamais importé ?
+  final List<String> fusionTags; // Tags ::FUSION:: associés (inclut ::FUSION::unused si orphelin)
 }
 ```
 
@@ -468,7 +467,7 @@ HomePage
 - Détection automatique des fichiers orphelins
 - Analyse complète du graphe des dépendances
 - Pas d'historique Hive (fusion ponctuelle)
-- Tous les fichiers ont `unused: true` dans le JSON Index
+- Tous les fichiers ont le tag `::FUSION::unused` dans fusionTags
 - Utile pour nettoyer un projet et détecter du code mort
 
 **Algorithme UnusedTagger** :
@@ -682,8 +681,7 @@ Each code block is introduced by a FILE banner and a tag line, for example:
     "endLine": 80,
     "imports": ["2,lib/app.dart"],
     "importedBy": [],
-    "fusionTags": ["::FUSION::json:main.dart", "::FUSION::json:1,", "::FUSION::code:main.dart", "::FUSION::code:1,"],
-    "unused": false
+    "fusionTags": ["::FUSION::json:main.dart", "::FUSION::json:1,", "::FUSION::code:main.dart", "::FUSION::code:1,"]
   },
   {
     "fileNumber": 2,
@@ -693,8 +691,7 @@ Each code block is introduced by a FILE banner and a tag line, for example:
     "endLine": 120,
     "imports": [],
     "importedBy": ["1,lib/main.dart"],
-    "fusionTags": ["::FUSION::json:app.dart", "::FUSION::json:2,", "::FUSION::code:app.dart", "::FUSION::code:2,"],
-    "unused": false
+    "fusionTags": ["::FUSION::json:app.dart", "::FUSION::json:2,", "::FUSION::code:app.dart", "::FUSION::code:2,"]
   }
 ]
 ----- END JSON INDEX -----

@@ -27,7 +27,7 @@ class _LinkRef {
   }
 }
 
-/// Représente une entrée dans l’index JSON du fichier fusionné.
+/// Représente une entrée dans l'index JSON du fichier fusionné.
 class FusionFileEntry {
   final int fileNumber;
   final String fileName;
@@ -37,7 +37,6 @@ class FusionFileEntry {
   final List<String> imports;     // éléments "N,path"
   final List<String> importedBy;  // éléments "N,path"
   final List<String> fusionTags;  // tags ::FUSION::... (générés + conservés)
-  final bool unused;              // drapeau bool complémentaire au tag ::FUSION::unused
 
   const FusionFileEntry({
     required this.fileNumber,
@@ -48,7 +47,6 @@ class FusionFileEntry {
     this.imports = const [],
     this.importedBy = const [],
     this.fusionTags = const [],
-    this.unused = false,
   });
 
   /// Construit une entrée en générant automatiquement les fusionTags
@@ -61,7 +59,6 @@ class FusionFileEntry {
     int endLine = -1,
     List<String> imports = const [],
     List<String> importedBy = const [],
-    bool unused = false,
   }) {
     final entry = FusionFileEntry(
       fileNumber: fileNumber,
@@ -72,7 +69,6 @@ class FusionFileEntry {
       imports: List.unmodifiable(imports),
       importedBy: List.unmodifiable(importedBy),
       fusionTags: const [],
-      unused: unused,
     );
     return entry._withGeneratedTags(preserveExisting: false);
   }
@@ -122,7 +118,6 @@ class FusionFileEntry {
     List<String>? imports,
     List<String>? importedBy,
     List<String>? fusionTags,
-    bool? unused,
   }) {
     return FusionFileEntry(
       fileNumber: fileNumber ?? this.fileNumber,
@@ -135,7 +130,6 @@ class FusionFileEntry {
       importedBy != null ? List.unmodifiable(importedBy) : this.importedBy,
       fusionTags:
       fusionTags != null ? List.unmodifiable(fusionTags) : this.fusionTags,
-      unused: unused ?? this.unused,
     );
   }
 
@@ -148,7 +142,6 @@ class FusionFileEntry {
     JsonKeys.imports: imports,
     JsonKeys.importedBy: importedBy,
     JsonKeys.fusionTags: fusionTags,
-    JsonKeys.unused: unused,
   };
 
   factory FusionFileEntry.fromJson(Map<String, dynamic> json) {
@@ -168,7 +161,6 @@ class FusionFileEntry {
       imports: List.unmodifiable(imports),
       importedBy: List.unmodifiable(importedBy),
       fusionTags: List.unmodifiable(fusionTags),
-      unused: (json[JsonKeys.unused] as bool?) ?? false,
     );
   }
 

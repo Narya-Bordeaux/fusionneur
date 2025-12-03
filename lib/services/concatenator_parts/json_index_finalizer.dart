@@ -74,12 +74,11 @@ class JsonIndexFinalizer {
           ? e
           : e.copyWith(startLine: pos.start, endLine: pos.end).regenerateTags();
 
-      // Préserver/rajouter le flag ::FUSION::unused + bool si nécessaire
+      // Préserver/rajouter le flag ::FUSION::unused si nécessaire
       final mustFlag = unusedPaths.contains(updated.filePath);
       if (mustFlag) {
         updated = updated.copyWith(
           fusionTags: _withUnusedFlag(updated.fusionTags),
-          unused: true,
         );
       }
       return updated;

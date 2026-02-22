@@ -77,19 +77,19 @@ lib/
 
 ## Fichiers clés
 
-| Fichier                                     | Rôle                                         |
-|---------------------------------------------|----------------------------------------------|
-| `lib/services/concatenator.dart`            | Moteur principal de fusion (2 passes)        |
-| `lib/services/storage.dart`                 | Chemins d'export (`~/Documents/fusionneur/`) |
-| `lib/services/import_graph.dart`            | Calcul des imports et reverse-imports        |
-| `lib/services/hash/hash_guard_service.dart` | Déduplication par hash CRC32                 |
-| `lib/core/json_models.dart`                 | `FusionFileEntry`, `FusionIndex`             |
-| `lib/core/constants.dart`                   | Tags `::FUSION::`, constantes globales       |
-| `lib/data/hive/models/`                     | `HiveProject`, `HivePreset`, `HiveRun`, etc. |
-| `bin/cli.dart`                              | Point d'entrée CLI                           |
-| `lib/pages/entry_mode/`                                         | Mode entrypoint complet                                                                                                    |
-| `lib/services/concatenator_parts/manifest_writer.dart`          | Écrit le bloc `::FUSION::SECTION:MANIFEST` en tête de chaque fichier généré ; section entrypoint conditionnelle selon le mode |
-| `docs/README_technical_ref.md`                                  | Référence technique complète                                                                                               |
+| Fichier                                                | Rôle                                         |
+|--------------------------------------------------------|----------------------------------------------|
+| `lib/services/concatenator.dart`                       | Moteur principal de fusion (2 passes)        |
+| `lib/services/storage.dart`                            | Chemins d'export (`~/Documents/fusionneur/`) |
+| `lib/services/import_graph.dart`                       | Calcul des imports et reverse-imports        |
+| `lib/services/hash/hash_guard_service.dart`            | Déduplication par hash CRC32                 |
+| `lib/core/json_models.dart`                            | `FusionFileEntry`, `FusionIndex`             |
+| `lib/core/constants.dart`                              | Tags `::FUSION::`, constantes globales       |
+| `lib/data/hive/models/`                                | `HiveProject`, `HivePreset`, `HiveRun`, etc. |
+| `bin/cli.dart`                                         | Point d'entrée CLI                           |
+| `lib/pages/entry_mode/`                                | Mode entrypoint complet                      |
+| `lib/services/concatenator_parts/manifest_writer.dart` | Écrit le bloc `::FUSION::SECTION:MANIFEST` en tête de chaque fichier généré ; section entrypoint conditionnelle selon le mode |
+| `docs/README_technical_ref.md`                         | Référence technique complète                 |
 
 ---
 

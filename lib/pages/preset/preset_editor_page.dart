@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:fusionneur/data/hive/models/hive_selection_spec.dart';
 import 'package:fusionneur/pages/preset/widgets/preset_header_form.dart';
 import 'package:fusionneur/pages/preset/widgets/preset_toolbar.dart';
 import 'package:fusionneur/pages/preset/widgets/preset_tree_pane.dart';
@@ -8,7 +9,7 @@ import 'package:fusionneur/pages/preset/widgets/preset_bottom_bar.dart';
 import 'package:fusionneur/data/providers/preset_selection_controller.dart';
 
 /// Page d’édition de preset (UI pure).
-/// - Remonte au parent une spécification (name/favorite/includedPaths) via onSave.
+/// - Remonte au parent une spécification (name/favorite/selectionSpec) via onSave.
 /// - Aucune persistance ici.
 class PresetEditorPage extends StatefulWidget {
   final String projectRoot;
@@ -18,7 +19,7 @@ class PresetEditorPage extends StatefulWidget {
   final void Function({
   required String name,
   required bool favorite,
-  required List<String> includedPaths,
+  required HiveSelectionSpec selectionSpec,
   }) onSave;
 
   final String initialName;
@@ -93,11 +94,11 @@ class _PresetEditorPageState extends State<PresetEditorPage> {
     final form = _formKey.currentState;
     if (form != null && !form.validate()) return;
 
-    final included = _controller.buildIncludedPaths();
+    final spec = _controller.buildSelectionSpec();
     widget.onSave(
       name: _nameController.text.trim(),
       favorite: _isFavorite,
-      includedPaths: included,
+      selectionSpec: spec,
     );
   }
 

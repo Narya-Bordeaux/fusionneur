@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 
+import 'package:fusionneur/core/utils/path_utils.dart';
 import 'package:fusionneur/data/hive/models/hive_selection_spec.dart';
 
 /// État de sélection tri‐état pour un nœud d’arbre.
@@ -198,20 +199,20 @@ class PresetSelectionController extends ChangeNotifier {
 
     if (node.isDir) {
       if (node.selection == SelectionState.included && parentState != SelectionState.included) {
-        includeDirs.add(node.path);
+        includeDirs.add(PathUtils.toProjectRelative(projectRoot, node.path));
       }
       if (node.selection == SelectionState.excluded && parentState == SelectionState.included) {
-        excludeDirs.add(node.path);
+        excludeDirs.add(PathUtils.toProjectRelative(projectRoot, node.path));
       }
       for (final c in node.children) {
         _collectSelectionSpec(c, node.selection, includeDirs, excludeDirs, includeFiles, excludeFiles);
       }
     } else {
       if (node.selection == SelectionState.included && parentState == SelectionState.excluded) {
-        includeFiles.add(node.path);
+        includeFiles.add(PathUtils.toProjectRelative(projectRoot, node.path));
       }
       if (node.selection == SelectionState.excluded && parentState == SelectionState.included) {
-        excludeFiles.add(node.path);
+        excludeFiles.add(PathUtils.toProjectRelative(projectRoot, node.path));
       }
     }
   }

@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import 'package:fusionneur/data/hive/models/hive_preset.dart';
 import 'package:fusionneur/data/hive/models/hive_file_ordering_policy.dart';
 import 'package:fusionneur/data/hive/models/hive_filter_options.dart';
+import 'package:fusionneur/data/hive/models/hive_selection_spec.dart';
 import 'package:fusionneur/pages/home/services/preset_service.dart';
 import 'package:fusionneur/data/repositories/preset_repository.dart';
 import 'package:fusionneur/data/repositories/hive_project_repository.dart';
@@ -20,14 +21,13 @@ class PresetUiActions {
         builder: (_) => PresetEditorPage(
           projectRoot: projectRoot,
           onCancel: () => Navigator.of(context).pop(),
-          onSave: ({required String name, required bool favorite, required List<String> includedPaths}) async {
-            final spec = PresetService.buildSpecFromIncludedPaths(projectRoot, includedPaths);
+          onSave: ({required String name, required bool favorite, required HiveSelectionSpec selectionSpec}) async {
             final preset = HivePreset(
               id: const Uuid().v4(),
               projectId: project.id,
               name: name,
               isFavorite: favorite,
-              hiveSelectionSpec: spec,
+              hiveSelectionSpec: selectionSpec,
               hiveFileOrderingPolicy: HiveFileOrderingPolicy(), // valeur par défaut
               hiveFilterOptions: HiveFilterOptions(), // valeur par défaut
             );
@@ -89,14 +89,13 @@ class PresetUiActions {
           initialName: preset.name,
           initialFavorite: preset.isFavorite,
           onCancel: () => Navigator.of(context).pop(),
-          onSave: ({required String name, required bool favorite, required List<String> includedPaths}) async {
-            final spec = PresetService.buildSpecFromIncludedPaths(projectRoot, includedPaths);
+          onSave: ({required String name, required bool favorite, required HiveSelectionSpec selectionSpec}) async {
             final updated = HivePreset(
               id: preset.id,
               projectId: preset.projectId,
               name: name,
               isFavorite: favorite,
-              hiveSelectionSpec: spec,
+              hiveSelectionSpec: selectionSpec,
               hiveFileOrderingPolicy: preset.hiveFileOrderingPolicy,
               hiveFilterOptions: preset.hiveFilterOptions,
             );

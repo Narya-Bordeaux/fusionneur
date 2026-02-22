@@ -45,32 +45,6 @@ class CodeFence {
 }
 
 
-/// Tags de recherche (préfixe sentinelle)
-class FusionTags {
-  static const String sentinel = '::FUSION::';
-
-  // Canaux “adressables”
-  static const String json = 'json';
-  static const String import = 'import';
-  static const String imported = 'imported';
-  static const String code = 'code';
-
-  // Canal “flag” (sans valeur après ':') — ex: ::FUSION::unused
-  static const String unused = 'unused';
-
-  /// Construit un tag par nom de fichier : ::FUSION::json:foo.dart
-  static String byName(String channel, String fileName) =>
-      '$sentinel$channel:$fileName';
-
-  /// Construit un tag par numéro : ::FUSION::json:17,
-  /// (la virgule évite les faux positifs 17 vs 117)
-  static String byNumber(String channel, int fileNumber) =>
-      '$sentinel$channel:$fileNumber,';
-
-  /// Construit un flag simple : ::FUSION::<nom>  (ex: ::FUSION::unused)
-  static String flag(String name) => '$sentinel$name';
-}
-
 /// Règles d’exclusion par défaut (fichiers générés)
 class DefaultExclusions {
   // Motifs style glob (interpretable par notre filtre)
@@ -102,6 +76,5 @@ class JsonKeys {
   static const String endLine = 'endLine';
   static const String imports = 'imports';
   static const String importedBy = 'importedBy';
-  static const String fusionTags = '_fusionTags';
-  static const String unused = 'unused'; // bool facultatif, en plus du tag
+  static const String unused = 'unused';
 }

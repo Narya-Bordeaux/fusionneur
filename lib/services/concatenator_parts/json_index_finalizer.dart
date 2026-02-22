@@ -16,8 +16,7 @@ class _StartEnd {
 /// Service responsable de la "pass 2" :
 /// - rescanner le fichier fusionné,
 /// - remplir startLine/endLine,
-/// - régénérer les tags,
-/// - préserver le flag ::FUSION::unused,
+/// - préserver le flag bool unused,
 /// - et réécrire le DERNIER bloc JSON via JsonIndexRewriter.
 class JsonIndexFinalizer {
   final JsonIndexRewriter _rewriter;
@@ -35,7 +34,7 @@ class JsonIndexFinalizer {
     final file = File(outputFilePath);
     final lines = await file.readAsLines();
 
-    // 2) Scanner les positions de chaque bloc (bannière -> fence close)
+    // 2) Scanner les positions de chaque bloc (bannière -> bannière de fin)
     final positions = <int, _StartEnd>{};
     int i = 0; // index 0-based
     while (i < lines.length) {
@@ -59,7 +58,7 @@ class JsonIndexFinalizer {
           j++;
         }
         final endLine = (j < lines.length) ? j + 1 : lines.length;
-        
+
         positions[n] = _StartEnd(startLine, endLine);
         i = j + 1;
         continue;
@@ -67,20 +66,16 @@ class JsonIndexFinalizer {
       i++;
     }
 
-    // 3) Reconstruire l'index final avec start/end remplis + tags régénérés
+    // 3) Reconstruire l'index final avec start/end remplis
     final updatedEntries = provisionalIndex.entries.map((e) {
       final pos = positions[e.fileNumber];
       var updated = (pos == null)
           ? e
-          : e.copyWith(startLine: pos.start, endLine: pos.end).regenerateTags();
+          : e.copyWith(startLine: pos.start, endLine: pos.end);
 
-      // Préserver/rajouter le flag ::FUSION::unused + bool si nécessaire
-      final mustFlag = unusedPaths.contains(updated.filePath);
-      if (mustFlag) {
-        updated = updated.copyWith(
-          fusionTags: _withUnusedFlag(updated.fusionTags),
-          unused: true,
-        );
+      // Préserver/rajouter le bool unused si nécessaire
+      if (unusedPaths.contains(updated.filePath)) {
+        updated = updated.copyWith(unused: true);
       }
       return updated;
     }).toList()
@@ -94,14 +89,5 @@ class JsonIndexFinalizer {
       index: updatedIndex,
       pretty: pretty,
     );
-  }
-
-  // ────────────────────────────────────────────────────────────────────────────
-  // Helpers
-
-  List<String> _withUnusedFlag(List<String> tags) {
-    final flag = FusionTags.flag(FusionTags.unused); // "::FUSION::unused"
-    if (tags.contains(flag)) return tags;
-    return [...tags, flag];
   }
 }

@@ -174,7 +174,7 @@ class Concatenator {
     await _jsonIndexFinalizer.finalize(
       outputFilePath: outputFilePath,
       provisionalIndex: provisionalIndex,
-      unusedPaths: unused, // préserver le flag si regenerateTags réécrit les tags
+      unusedPaths: unused,
       pretty: true,
     );
   }

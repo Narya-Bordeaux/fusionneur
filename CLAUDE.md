@@ -10,7 +10,7 @@
 **Trois modes de fusion :**
 - **Mode Projet** — fusion complète via un preset (sélection, ordre, filtres)
 - **Mode Entrypoint** — fusion partielle à partir d'un fichier Dart et de ses imports transitifs
-- **Mode Unused Files** - fusion des fichiers qui ne sont pas importés dans les autres fichiers de l'app.
+- **Mode Unused Files** — fusion des fichiers non utilisés. Détection via le graphe d'imports : un fichier est considéré unused s'il n'est référencé par aucun import/export/`part` ET ne contient pas de `main()`. Produit un Markdown dans `exports/<slug>/unused/`. Le flag `unused` est aussi injecté dans le JSON index des autres modes.
 
 **CLI disponible** (`bin/cli.dart`) pour exécuter sans UI.
 
@@ -87,8 +87,9 @@ lib/
 | `lib/core/constants.dart`                   | Tags `::FUSION::`, constantes globales       |
 | `lib/data/hive/models/`                     | `HiveProject`, `HivePreset`, `HiveRun`, etc. |
 | `bin/cli.dart`                              | Point d'entrée CLI                           |
-| `lib/pages/entry_mode/`                     | Mode entrypoint complet                      |
-| `docs/README_technical_ref.md`              | Référence technique complète                 |
+| `lib/pages/entry_mode/`                                         | Mode entrypoint complet                                                                                                    |
+| `lib/services/concatenator_parts/manifest_writer.dart`          | Écrit le bloc `::FUSION::SECTION:MANIFEST` en tête de chaque fichier généré ; section entrypoint conditionnelle selon le mode |
+| `docs/README_technical_ref.md`                                  | Référence technique complète                                                                                               |
 
 ---
 

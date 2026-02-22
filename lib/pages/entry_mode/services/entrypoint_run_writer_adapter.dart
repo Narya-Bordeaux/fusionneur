@@ -8,6 +8,7 @@ import 'package:path/path.dart' as p;
 
 import 'package:fusionneur/services/concatenator.dart';
 import 'package:fusionneur/services/concatenator_parts/file_selection.dart';
+import 'package:fusionneur/services/concatenator_parts/manifest_writer.dart';
 import 'package:fusionneur/pages/entry_mode/services/entrypoint_run_executor.dart';
 import 'package:fusionneur/services/hash/hash_guard_service.dart';
 import 'package:fusionneur/services/storage.dart';
@@ -38,6 +39,19 @@ EntryRunWriter buildEntrypointRunWriterAdapter({
       ]);
     }
     // ──────────────────────────────────────────────
+    // 1bis. Construire les libellés d'options actives pour le manifest.
+    final activeOptionLabels = <String>[];
+    if (entryOptions?.includeImportedByOnce ?? false) {
+      activeOptionLabels.add('Include imported-by files (1 level up)');
+    }
+    if (entryOptions?.excludeGenerated ?? false) {
+      activeOptionLabels.add('Exclude generated files (*.g.dart)');
+    }
+    if (entryOptions?.excludeI18n ?? false) {
+      activeOptionLabels.add('Exclude localization files (*.arb, app_localizations*.dart)');
+    }
+
+    // ──────────────────────────────────────────────
 // 2bis. Appliquer manuellement le filtrage des exclusions
     final matcher = GlobMatcher(excludePatterns: excludePatterns);
 
@@ -67,6 +81,12 @@ EntryRunWriter buildEntrypointRunWriterAdapter({
       ),
       excludePatterns: excludePatterns, // ✅ ici, au bon niveau
       computeImports: (files) async => plan.importsMap,
+      manifestInfo: ManifestInfo(
+        projectName: ctx.packageName,
+        formatVersion: 'Fusion v3',
+        entryFile: ctx.entryFile,
+        activeOptions: activeOptionLabels,
+      ),
     );
 
     // ──────────────────────────────────────────────

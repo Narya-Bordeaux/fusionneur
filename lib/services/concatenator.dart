@@ -42,6 +42,10 @@ class ConcatenationOptions {
   /// Sélection déclarative (multi-dossiers/fichiers, exclusions).
   final SelectionSpec selectionSpec;
 
+  /// Infos de manifest à utiliser en tête du fichier fusionné.
+  /// Si null, un manifest minimal (projectName + formatVersion) sera généré.
+  final ManifestInfo? manifestInfo;
+
   const ConcatenationOptions({
     this.subDir = 'lib',
     this.onlyDart = false,
@@ -54,6 +58,7 @@ class ConcatenationOptions {
       fallbackTree: true,
     ),
     this.selectionSpec = const SelectionSpec(includeDirs: ['lib']),
+    this.manifestInfo,
   });
 }
 
@@ -162,12 +167,18 @@ class Concatenator {
     );
 
     // 6) PASS 1: écrire le fichier provisoire
+    final manifestInfo = options.manifestInfo ??
+        ManifestInfo(
+          projectName: PathUtils.basename(projectRoot),
+          formatVersion: 'Fusion v3',
+        );
     await _writeProvisional(
       projectRoot: projectRoot,
       outputFilePath: outputFilePath,
       index: provisionalIndex,
       files: ordered,
       numbering: numbering,
+      manifestInfo: manifestInfo,
     );
 
     // 7) PASS 2: relire, remplir start/end, réécrire JSON (dernier bloc)
@@ -186,16 +197,13 @@ class Concatenator {
     required FusionIndex index,
     required List<String> files,
     required Map<String, int> numbering,
+    required ManifestInfo manifestInfo,
   }) async {
     final out = File(outputFilePath);
     final sink = out.openWrite();
 
     // MANIFEST (anglais ; généré par ManifestWriter, sans données volatiles)
-    final info = ManifestInfo(
-      projectName: PathUtils.basename(projectRoot),
-      formatVersion: 'Fusion v3',
-    );
-    _manifestWriter.writeTo(sink, info);
+    _manifestWriter.writeTo(sink, manifestInfo);
 
     // SECTION marker réel du JSON index
     _sectionMarkersWriter.writeJsonIndexMarker(sink);

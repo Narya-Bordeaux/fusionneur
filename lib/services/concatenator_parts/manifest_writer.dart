@@ -3,13 +3,18 @@
 /// Simple carrier des infos contextuelles affichables en tête.
 /// (Adapter au besoin : rien d'obligatoire n'est utilisé pour le hash.)
 class ManifestInfo {
-  final String projectName;   // nom logique du projet (affichage)
-  final String? presetName;   // preset utilisé (facultatif)
-  final String formatVersion; // ex: "Fusion v3"
+  final String projectName;           // nom logique du projet (affichage)
+  final String? presetName;           // preset utilisé (facultatif)
+  final String formatVersion;         // ex: "Fusion v3"
+  final String? entryFile;            // fichier d'entrée (mode entrypoint uniquement)
+  final List<String>? activeOptions;  // options cochées, libellés humains
+
   const ManifestInfo({
     required this.projectName,
     required this.formatVersion,
     this.presetName,
+    this.entryFile,
+    this.activeOptions,
   });
 }
 
@@ -34,6 +39,22 @@ class ManifestWriter {
     b.writeln('${info.formatVersion} — Concatenated file for project: ${info.projectName}'
         '${info.presetName != null ? ' (preset: ${info.presetName})' : ''}');
     b.writeln();
+
+    // Section spécifique au mode entrypoint (absente en mode standard)
+    if (info.entryFile != null) {
+      b.writeln('ENTRYPOINT FUSION');
+      b.writeln('- Entry file: ${info.entryFile}');
+      final opts = info.activeOptions;
+      if (opts != null && opts.isNotEmpty) {
+        b.writeln('- Active options:');
+        for (final opt in opts) {
+          b.writeln('    • $opt');
+        }
+      } else {
+        b.writeln('- Active options: (none)');
+      }
+      b.writeln();
+    }
 
     // How to navigate — prescriptif pour IA et humain
     b.writeln('HOW TO NAVIGATE THIS FILE');

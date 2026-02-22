@@ -7,9 +7,10 @@
 - Un **index JSON** (numéros de fichiers, chemins, imports, plages de lignes)
 - Le **code source** de chaque fichier, délimité par des tags `::FUSION::`
 
-**Deux modes de fusion :**
+**Trois modes de fusion :**
 - **Mode Projet** — fusion complète via un preset (sélection, ordre, filtres)
 - **Mode Entrypoint** — fusion partielle à partir d'un fichier Dart et de ses imports transitifs
+- **Mode Unused Files** - fusion des fichiers qui ne sont pas importés dans les autres fichiers de l'app.
 
 **CLI disponible** (`bin/cli.dart`) pour exécuter sans UI.
 
@@ -63,31 +64,31 @@ lib/
 ```
 
 **Patterns utilisés :**
-| Pattern | Où |
-|---|---|
-| Repository Pattern | `data/repositories/` — abstraction Hive |
-| Service Locator | `Storage.I` — accès global aux chemins |
-| Dependency Injection | Constructeurs avec params optionnels (testabilité) |
-| StateNotifier + Riverpod | State management UI |
-| Two-Pass Processing | `Concatenator` : index provisoire (pass 1) → index finalisé (pass 2) |
-| Strategy Pattern | `FileOrderingPolicy`, `NumberingStrategy` |
+| Pattern                  | Où                                                                   |
+|--------------------------|----------------------------------------------------------------------|
+| Repository Pattern       | `data/repositories/` — abstraction Hive                              |
+| Service Locator          | `Storage.I` — accès global aux chemins                               |
+| Dependency Injection     | Constructeurs avec params optionnels (testabilité)                   |
+| StateNotifier + Riverpod | State management UI                                                  |
+| Two-Pass Processing      | `Concatenator` : index provisoire (pass 1) → index finalisé (pass 2) |
+| Strategy Pattern         | `FileOrderingPolicy`, `NumberingStrategy`                            |
 
 ---
 
 ## Fichiers clés
 
-| Fichier | Rôle |
-|---|---|
-| `lib/services/concatenator.dart` | Moteur principal de fusion (2 passes) |
-| `lib/services/storage.dart` | Chemins d'export (`~/Documents/fusionneur/`) |
-| `lib/services/import_graph.dart` | Calcul des imports et reverse-imports |
-| `lib/services/hash/hash_guard_service.dart` | Déduplication par hash CRC32 |
-| `lib/core/json_models.dart` | `FusionFileEntry`, `FusionIndex` |
-| `lib/core/constants.dart` | Tags `::FUSION::`, constantes globales |
-| `lib/data/hive/models/` | `HiveProject`, `HivePreset`, `HiveRun`, etc. |
-| `bin/cli.dart` | Point d'entrée CLI |
-| `lib/pages/entry_mode/` | Mode entrypoint complet |
-| `docs/README_technical_ref.md` | Référence technique complète |
+| Fichier                                     | Rôle                                         |
+|---------------------------------------------|----------------------------------------------|
+| `lib/services/concatenator.dart`            | Moteur principal de fusion (2 passes)        |
+| `lib/services/storage.dart`                 | Chemins d'export (`~/Documents/fusionneur/`) |
+| `lib/services/import_graph.dart`            | Calcul des imports et reverse-imports        |
+| `lib/services/hash/hash_guard_service.dart` | Déduplication par hash CRC32                 |
+| `lib/core/json_models.dart`                 | `FusionFileEntry`, `FusionIndex`             |
+| `lib/core/constants.dart`                   | Tags `::FUSION::`, constantes globales       |
+| `lib/data/hive/models/`                     | `HiveProject`, `HivePreset`, `HiveRun`, etc. |
+| `bin/cli.dart`                              | Point d'entrée CLI                           |
+| `lib/pages/entry_mode/`                     | Mode entrypoint complet                      |
+| `docs/README_technical_ref.md`              | Référence technique complète                 |
 
 ---
 
@@ -114,29 +115,21 @@ Future<void> sauvegarderExport(String chemin, Uint8List octets) async { ... }
 - **Local à une feature** (`pages/<feature>/widgets/` ou `services/`) si utilisé dans **1 seule page**
 - **Partagé** (`core/` ou `services/`) si utilisé dans **2+ features** ou générique
 
-### Textes UI
-
-Gérés via fichiers ARB. Clés en anglais, textes en français, champ `context` obligatoire.
-
-### Icônes
-
-Toujours utiliser `AppIcon(glyph: AppGlyph.xxx)` — ne pas appeler `Icon(Icons.xxx)` directement.
-
 ---
 
 ## Stack technique
 
-| Technologie | Version | Usage |
-|---|---|---|
-| Dart SDK | ^3.8.1 | Langage |
-| Flutter | SDK | Framework UI multiplateforme |
-| Hive + hive_flutter | ^2.2.3 / ^1.1.0 | Persistance locale |
-| flutter_riverpod | ^3.0.0 | State management |
-| file_picker | ^10.3.3 | Sélection de fichiers |
-| path_provider | ^2.1.2 | Chemins système |
-| crypto | ^3.0.3 | Hash CRC32 |
-| uuid | ^4.5.1 | Génération d'identifiants |
-| build_runner + hive_generator | dev | Génération des adaptateurs Hive |
+| Technologie                   | Version         | Usage                           |
+|-------------------------------|-----------------|---------------------------------|
+| Dart SDK                      | ^3.8.1          | Langage                         |
+| Flutter                       | SDK             | Framework UI multiplateforme    |
+| Hive + hive_flutter           | ^2.2.3 / ^1.1.0 | Persistance locale              |
+| flutter_riverpod              | ^3.0.0          | State management                |
+| file_picker                   | ^10.3.3         | Sélection de fichiers           |
+| path_provider                 | ^2.1.2          | Chemins système                 |
+| crypto                        | ^3.0.3          | Hash CRC32                      |
+| uuid                          | ^4.5.1          | Génération d'identifiants       |
+| build_runner + hive_generator | dev             | Génération des adaptateurs Hive |
 
 ---
 
